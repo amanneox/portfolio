@@ -1,26 +1,137 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --terminal-green: #22d3ee;
+  --terminal-amber: #ffb000;
+  --terminal-dim: #155e75;
+  /* 90s Anime Aesthetics */
+  --font-orbitron: var(--font-orbitron);
+  --font-cinzel: var(--font-cinzel);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #050505;
+  color: #e0e0e0;
+  overflow-x: hidden;
+}
+
+/* Utilities */
+.text-glow {
+  text-shadow: 0 0 10px var(--terminal-green), 0 0 20px var(--terminal-green);
+}
+
+.anime-title {
+  font-family: var(--font-cinzel);
+  letter-spacing: 0.1em;
+  font-weight: 800;
+}
+
+.hud-text {
+  font-family: var(--font-orbitron);
+  letter-spacing: 0.05em;
+}
+
+/* Chromatic Aberration Animation */
+@keyframes chromatic {
+  0% {
+    text-shadow: 2px 0 0 red, -2px 0 0 blue;
+  }
+  25% {
+    text-shadow: 2px 2px 0 red, -2px -2px 0 blue;
+  }
+  50% {
+    text-shadow: -2px 0 0 red, 2px 0 0 blue;
+  }
+  75% {
+    text-shadow: -2px -2px 0 red, 2px 2px 0 blue;
+  }
+  100% {
+    text-shadow: 2px 0 0 red, -2px 0 0 blue;
+  }
+}
+
+.chromatic-text:hover {
+  animation: chromatic 0.5s infinite;
+}
+
+/* Radar Scan Animation */
+@keyframes radar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-radar-spin {
+  animation: radar-spin 4s linear infinite;
+}
+
+/* CRT Scanline Overlay */
+.scanlines::before {
+  content: " ";
+  display: block;
+  position: fixed; /* Changed from absolute to fixed */
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+      to bottom,
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 50; /* Lower z-index just in case, but keep above background */
+  pointer-events: none;
+  mix-blend-mode: overlay; /* Improved blend mode */
+}
+
+/* Subtle Flicker */
+.scanlines::after {
+  content: " ";
+  display: block;
+  position: fixed; /* Changed from absolute to fixed */
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 50;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.02; }
+  50% { opacity: 0.05; }
+  100% { opacity: 0.02; }
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.glitch-hover:hover {
+  animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+  color: var(--terminal-green);
 }
