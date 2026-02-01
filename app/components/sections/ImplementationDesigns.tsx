@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import AnimatedText from "../ui/AnimatedText";
 import CyberFrame from "../ui/CyberFrame";
 
@@ -9,6 +9,23 @@ import { useContentStore } from "../../store/contentStore";
 const ImplementationDesigns: React.FC = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const blueprints = useContentStore(state => state.blueprints);
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    useEffect(() => {
+        const scrollContainer = scrollRef.current;
+        if (!scrollContainer) return;
+
+        const handleScroll = () => {
+            const scrollLeft = scrollContainer.scrollLeft;
+            const cardWidth = scrollContainer.firstElementChild?.clientWidth || 350;
+            const gap = 24; // gap-6 = 1.5rem = 24px
+            const index = Math.round(scrollLeft / (cardWidth + gap));
+            setActiveIndex(Math.min(index, blueprints.length - 1));
+        };
+
+        scrollContainer.addEventListener('scroll', handleScroll);
+        return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }, [blueprints.length]);
 
     return (
         <section className="mb-24">
@@ -47,9 +64,14 @@ const ImplementationDesigns: React.FC = () => {
 
                             <div className="border-t border-cyan-900/50 p-4 flex justify-between items-center bg-cyan-950/20">
                                 <span className="text-[9px] text-cyan-600 font-orbitron">REV. 2.4.1</span>
-                                <button className="text-[10px] text-cyan-400 hover:text-cyan-200 border border-cyan-800 hover:border-cyan-400 px-3 py-1 transition-colors uppercase">
+                                <a
+                                    href={bp.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[10px] text-cyan-400 hover:text-cyan-200 border border-cyan-800 hover:border-cyan-400 px-3 py-1 transition-colors uppercase"
+                                >
                                     View_Source
-                                </button>
+                                </a>
                             </div>
                         </CyberFrame>
                     </div>
@@ -57,8 +79,11 @@ const ImplementationDesigns: React.FC = () => {
             </div>
 
             <div className="flex lg:hidden gap-1 h-1 w-full max-w-[200px] mt-2">
-                {[...Array(4)].map((_, i) => (
-                    <div key={i} className="flex-1 bg-zinc-800 first:bg-cyan-600" />
+                {blueprints.map((_, i) => (
+                    <div 
+                        key={i} 
+                        className={`flex-1 transition-colors ${i === activeIndex ? 'bg-cyan-600' : 'bg-zinc-800'}`} 
+                    />
                 ))}
             </div>
         </section>

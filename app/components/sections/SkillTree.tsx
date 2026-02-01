@@ -54,7 +54,7 @@ const SkillTree: React.FC = () => {
                         >
                             <span className="font-bold">{mission.company}</span>
                             <span className="hidden sm:inline text-zinc-600 ml-2">
-                                {mission.year.split(' - ')[0]}
+                                {mission.year.split(' - ')[1]}
                             </span>
                             {isActive && (
                                 <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />

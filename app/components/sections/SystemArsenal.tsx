@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef } from "react";
 import { animate, stagger } from "animejs";
 import { useContentStore } from "../../store/contentStore";
@@ -5,6 +7,7 @@ import { useContentStore } from "../../store/contentStore";
 const SystemArsenal: React.FC = () => {
     const { arsenal } = useContentStore(state => state);
     const containerRef = useRef<HTMLDivElement>(null);
+    const sectionRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         if (containerRef.current) {
@@ -24,16 +27,58 @@ const SystemArsenal: React.FC = () => {
         }
     }, [arsenal]);
 
+    // Section reveal animation
+    useEffect(() => {
+        if (!sectionRef.current) return;
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animate('.arsenal-header', {
+                        opacity: [0, 1],
+                        translateX: [-20, 0],
+                        duration: 600,
+                        easing: 'easeOutExpo'
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        observer.observe(sectionRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    const handleChipHover = (e: React.MouseEvent<HTMLSpanElement>) => {
+        animate(e.currentTarget, {
+            scale: 1.05,
+            backgroundColor: 'rgba(34, 211, 238, 0.1)',
+            borderColor: 'rgba(34, 211, 238, 0.5)',
+            duration: 200,
+            easing: 'easeOutQuad'
+        });
+    };
+
+    const handleChipLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
+        animate(e.currentTarget, {
+            scale: 1,
+            backgroundColor: 'rgba(24, 24, 27, 1)',
+            borderColor: 'rgba(63, 63, 70, 1)',
+            duration: 200,
+            easing: 'easeOutQuad'
+        });
+    };
+
     return (
-        <section ref={containerRef} className="border border-zinc-800 bg-zinc-900/30 p-6 mb-12">
-            <div className="flex items-center gap-3 mb-6">
+        <section ref={sectionRef} className="border border-zinc-800 bg-zinc-900/30 p-6 mb-12 glass-panel glow-hover">
+            <div className="arsenal-header flex items-center gap-3 mb-6 opacity-0">
                 <div className="w-1.5 h-1.5 bg-cyan-500 animate-pulse" />
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest font-mono">
                     Skills & Technology
                 </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 {arsenal.map((group, index) => (
                     <div key={index} className="skill-card opacity-0">
                         <div className="text-[10px] text-cyan-500 font-mono uppercase tracking-widest mb-3 border-b border-zinc-800 pb-2">
@@ -43,7 +88,9 @@ const SystemArsenal: React.FC = () => {
                             {group.items.map((item, i) => (
                                 <span
                                     key={i}
-                                    className="tech-chip px-2 py-1 text-xs text-zinc-300 bg-zinc-900 border border-zinc-700 hover:border-cyan-500/50 hover:text-cyan-400 transition-colors cursor-default"
+                                    onMouseEnter={handleChipHover}
+                                    onMouseLeave={handleChipLeave}
+                                    className="tech-chip px-2 py-1 text-xs text-zinc-300 bg-zinc-900 border border-zinc-700 cursor-default transition-colors"
                                 >
                                     {item}
                                 </span>

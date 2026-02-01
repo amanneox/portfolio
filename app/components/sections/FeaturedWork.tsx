@@ -3,70 +3,164 @@
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { animate, stagger } from "animejs";
-import AnimatedText from "../ui/AnimatedText";
-import CyberFrame from "../ui/CyberFrame";
 import { useContentStore } from "../../store/contentStore";
 
 const FeaturedWork: React.FC = () => {
     const workGridRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLDivElement>(null);
     const projects = useContentStore(state => state.projects);
 
     useEffect(() => {
+        // Header animation
+        if (headerRef.current) {
+            animate(headerRef.current, {
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 600,
+                easing: 'easeOutExpo'
+            });
+        }
+
+        // Cards stagger animation
         if (workGridRef.current) {
             animate(workGridRef.current.children, {
                 scale: [0.95, 1],
                 opacity: [0, 1],
-                delay: stagger(200, { start: 500 }),
+                translateY: [30, 0],
+                delay: stagger(150, { start: 200 }),
                 easing: 'easeOutExpo'
             });
         }
     }, [projects]);
 
+    const handleCardHover = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        const card = e.currentTarget;
+        const image = card.querySelector('.project-image');
+        
+        animate(card, {
+            y: -8,
+            duration: 300,
+            easing: 'easeOutQuad'
+        });
+
+        if (image) {
+            animate(image, {
+                scale: 1.05,
+                duration: 400,
+                easing: 'easeOutQuad'
+            });
+        }
+    };
+
+    const handleCardLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        const card = e.currentTarget;
+        const image = card.querySelector('.project-image');
+        
+        animate(card, {
+            y: 0,
+            duration: 400,
+            easing: 'easeOutElastic(1, .8)'
+        });
+
+        if (image) {
+            animate(image, {
+                scale: 1,
+                duration: 400,
+                easing: 'easeOutQuad'
+            });
+        }
+    };
+
     return (
-        <section>
-            <div className="flex items-center gap-2 mb-6">
-                <div className="w-2 h-2 bg-cyan-400" />
-                <h3 className="text-xs tracking-[0.2em] text-zinc-500 uppercase">
-                    <AnimatedText delay={800}>System Modules / Work</AnimatedText>
-                </h3>
+        <section className="py-8">
+            {/* Section Header */}
+            <div ref={headerRef} className="flex items-center justify-between mb-8 opacity-0">
+                <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-cyan-400 animate-pulse" />
+                    <h2 className="text-sm font-bold text-zinc-300 uppercase tracking-[0.2em] font-mono">
+                        Projects
+                    </h2>
+                </div>
+                <div className="text-xs font-mono text-zinc-600">
+                    {projects.length} MODULES DEPLOYED
+                </div>
             </div>
 
-            <div ref={workGridRef} className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-24">
-                {projects.map((project, i) => (
-                    <CyberFrame
-                        key={project.label}
-                        label={project.label}
-                        className="min-h-[280px] flex flex-col justify-end group cursor-pointer border-zinc-700/50 transition-all duration-500 hover:border-cyan-500/50 relative overflow-hidden"
+            {/* Projects Grid */}
+            <div ref={workGridRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {projects.map((project) => (
+                    <a
+                        key={project.id}
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onMouseEnter={handleCardHover}
+                        onMouseLeave={handleCardLeave}
+                        className="group relative bg-zinc-900/40 backdrop-blur-sm border border-zinc-800 
+                            hover:border-cyan-500/40 overflow-hidden cursor-pointer opacity-0 block"
                     >
-                        {project.image && (
-                            <div className="absolute inset-0 bg-zinc-950/50 transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
-                                <Image
-                                    src={project.image}
-                                    alt={project.title}
-                                    fill
-                                    className="object-contain"
-                                />
-                            </div>
-                        )}
-
-                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
-
-                        <div className="relative z-10 px-5 float-end pb-5">
-                            <div className="w-12 h-[1px] bg-zinc-700 mb-3 group-hover:bg-cyan-400 transition-colors duration-300" />
-
-                            <div className="flex flex-col gap-1">
-                                <h4 className="text-lg font-bold text-zinc-100 hud-text tracking-wide group-hover:text-cyan-400 transition-colors flex items-center gap-2">
-                                    <span className="text-xs text-zinc-500 font-mono font-normal group-hover:text-cyan-500/70">
-                                        {(i + 1).toString().padStart(2, '0')} //
-                                    </span>
-                                    {project.title}
-                                </h4>
-                                <p className="text-zinc-500 text-xs leading-relaxed max-w-[90%] group-hover:text-zinc-400 transition-colors">
-                                    {project.description}
-                                </p>
+                        {/* Project Image */}
+                        <div className="relative h-48 overflow-hidden">
+                            {project.image ? (
+                                <div className="project-image absolute inset-0 grayscale group-hover:grayscale-0 transition-all duration-500">
+                                    <Image
+                                        src={project.image}
+                                        alt={project.title}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center">
+                                    <span className="text-4xl font-mono text-zinc-700">{project.id}</span>
+                                </div>
+                            )}
+                            
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent" />
+                            
+                            {/* Year Badge */}
+                            <div className="absolute top-3 right-3 px-2 py-1 bg-zinc-950/80 border border-zinc-700 text-[10px] font-mono text-zinc-500">
+                                {project.year}
                             </div>
                         </div>
-                    </CyberFrame>
+
+                        {/* Content */}
+                        <div className="p-5">
+                            {/* ID and Title */}
+                            <div className="flex items-baseline gap-2 mb-2">
+                                <span className="text-[10px] font-mono text-zinc-600">{project.id} //</span>
+                                <h3 className="text-lg font-bold text-zinc-200 group-hover:text-cyan-400 transition-colors font-mono tracking-tight">
+                                    {project.title}
+                                </h3>
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-sm text-zinc-500 leading-relaxed mb-4 group-hover:text-zinc-400 transition-colors">
+                                {project.longDescription}
+                            </p>
+
+                            {/* Tags */}
+                            <div className="flex flex-wrap gap-2 pt-3 border-t border-zinc-800">
+                                {project.tags.map((tag, i) => (
+                                    <span 
+                                        key={i}
+                                        className="text-[10px] font-mono text-zinc-600 bg-zinc-900/80 
+                                            px-2 py-1 border border-zinc-800 group-hover:border-cyan-500/30 
+                                            group-hover:text-cyan-500/70 transition-all"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Hover Corner Accents */}
+                        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-transparent group-hover:border-cyan-500/50 transition-colors" />
+                        <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-transparent group-hover:border-cyan-500/50 transition-colors" />
+                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-transparent group-hover:border-cyan-500/50 transition-colors" />
+                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-transparent group-hover:border-cyan-500/50 transition-colors" />
+                    </a>
                 ))}
             </div>
         </section>

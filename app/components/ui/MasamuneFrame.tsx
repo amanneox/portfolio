@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef } from "react";
 import { animate, stagger } from "animejs";
 
@@ -22,7 +24,6 @@ const MasamuneFrame: React.FC<MasamuneFrameProps> = ({ children, title, classNam
             });
 
             // Animate main container borders (expand from center)
-            // Animate main container borders (expand from center)
             const mainContainer = frameRef.current.querySelector('.main-container');
             if (mainContainer) {
                 animate(mainContainer, {
@@ -35,8 +36,35 @@ const MasamuneFrame: React.FC<MasamuneFrameProps> = ({ children, title, classNam
         }
     }, []);
 
+    const handleMouseEnter = () => {
+        if (!frameRef.current) return;
+        
+        const mainContainer = frameRef.current.querySelector('.main-container');
+        if (mainContainer) {
+            // Glow effect on hover
+            animate(mainContainer, {
+                boxShadow: [
+                    '0 0 0 rgba(34, 211, 238, 0)',
+                    '0 0 40px rgba(34, 211, 238, 0.1)',
+                    '0 0 0 rgba(34, 211, 238, 0)'
+                ],
+                duration: 1500,
+                easing: 'easeInOutSine',
+                loop: 2
+            });
+        }
+
+        // Corner bolt pulse
+        animate(frameRef.current.querySelectorAll('.corner-bolt'), {
+            borderColor: ['#52525b', '#22d3ee', '#52525b'],
+            delay: stagger(50),
+            duration: 400,
+            easing: 'easeInOutQuad'
+        });
+    };
+
     return (
-        <div ref={frameRef} className={`relative ${className}`}>
+        <div ref={frameRef} className={`relative ${className}`} onMouseEnter={handleMouseEnter}>
             {/* Top Bar with Title */}
             <div className="flex items-end mb-0">
                 <div className="bg-zinc-800 text-zinc-100 px-4 py-1.5 text-xs font-bold font-mono tracking-widest clip-path-slant relative z-10">
@@ -51,18 +79,18 @@ const MasamuneFrame: React.FC<MasamuneFrameProps> = ({ children, title, classNam
             </div>
 
             {/* Main Content Container */}
-            <div className="main-container relative border-x-2 md:border-x-4 border-b-2 md:border-b-4 border-zinc-900 bg-zinc-900/30 p-4 md:p-8 opacity-0">
+            <div className="main-container relative border-x-2 md:border-x-4 border-b-2 md:border-b-4 border-zinc-900 bg-zinc-900/30 backdrop-blur-sm p-4 md:p-8 opacity-0 transition-all duration-300 hover:border-zinc-700">
                 {/* Corner Bolts */}
-                <div className="corner-bolt absolute -top-[6px] -left-[6px] w-6 h-6 border-t-2 border-l-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center">
+                <div className="corner-bolt absolute -top-[6px] -left-[6px] w-6 h-6 border-t-2 border-l-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center transition-colors">
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 shadow-inner" />
                 </div>
-                <div className="corner-bolt absolute -top-[6px] -right-[6px] w-6 h-6 border-t-2 border-r-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center">
+                <div className="corner-bolt absolute -top-[6px] -right-[6px] w-6 h-6 border-t-2 border-r-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center transition-colors">
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 shadow-inner" />
                 </div>
-                <div className="corner-bolt absolute -bottom-[6px] -left-[6px] w-6 h-6 border-b-2 border-l-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center">
+                <div className="corner-bolt absolute -bottom-[6px] -left-[6px] w-6 h-6 border-b-2 border-l-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center transition-colors">
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 shadow-inner" />
                 </div>
-                <div className="corner-bolt absolute -bottom-[6px] -right-[6px] w-6 h-6 border-b-2 border-r-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center">
+                <div className="corner-bolt absolute -bottom-[6px] -right-[6px] w-6 h-6 border-b-2 border-r-2 border-zinc-600 bg-zinc-950 z-20 flex items-center justify-center transition-colors">
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 shadow-inner" />
                 </div>
 

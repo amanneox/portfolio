@@ -3,7 +3,7 @@ import AnimatedText from "../ui/AnimatedText";
 import { useContentStore } from "../../store/contentStore";
 
 const HeroSection: React.FC = () => {
-    const { name, role, skills } = useContentStore(state => state.hero);
+    const { name, role, skills, resumeLink } = useContentStore(state => state.hero);
 
     return (
         <section className="mb-16">
@@ -32,8 +32,8 @@ const HeroSection: React.FC = () => {
             {/* Resume Download */}
             <div className="mt-8">
                 <a
-                    href="/resume.pdf"
-                    download
+                    href={resumeLink || "#"}
+                    target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-cyan-400 uppercase tracking-widest group transition-colors"
                 >
                     <span className="w-2 h-2 bg-zinc-800 group-hover:bg-cyan-400 transition-colors" />

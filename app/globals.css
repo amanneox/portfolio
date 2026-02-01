@@ -9,10 +9,60 @@
   --font-cinzel: var(--font-cinzel);
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22d3ee40;
+  border-radius: 3px;
+  transition: all 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #22d3ee;
+  box-shadow: 0 0 10px #22d3ee60;
+}
+
 body {
   background-color: #050505;
   color: #e0e0e0;
   overflow-x: hidden;
+}
+
+/* Glass-morphism Panel */
+.glass-panel {
+  background: rgba(24, 24, 27, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Enhanced glow effect */
+.glow-hover {
+  transition: all 0.3s ease;
+}
+
+.glow-hover:hover {
+  border-color: #22d3ee60;
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.1);
+}
+
+/* Reveal animation initial state */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Utilities */
@@ -134,4 +184,15 @@ body {
 .glitch-hover:hover {
   animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
   color: var(--terminal-green);
+}
+
+/* Typewriter cursor */
+.typewriter-cursor::after {
+  content: '_';
+  animation: blink 1s step-end infinite;
+  color: var(--terminal-green);
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
 }
