@@ -147,7 +147,7 @@ export const useContentStore = create<ContentState>(() => ({
             tags: ["React", "Framer Motion", "CSS Animations", "Performance"],
             year: "2025",
             image: "/project-landing.png",
-            link: "https://github.com/amanneox/landing-001"
+            link: "https://landing-001-smoky.vercel.app/"
         }
     ],
     blueprints: [
