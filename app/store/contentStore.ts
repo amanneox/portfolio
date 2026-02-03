@@ -137,7 +137,7 @@ export const useContentStore = create<ContentState>(() => ({
             tags: ["React", "TypeScript", "MDX", "Kafka"],
             year: "2025",
             image: "/project-docs.png",
-            link: "https://github.com/amanneox/ai-docs"
+            link: "https://ai-docs-pi.vercel.app/"
         },
         {
             id: "PROJ_04",
